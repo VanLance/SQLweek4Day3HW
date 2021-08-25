@@ -1,0 +1,71 @@
+-- Question 1 Answer: Jennifer, Kim, Richard, Bryan, Ian
+select first_name, last_name, district
+FROM address
+INNER JOIN customer
+ON address.address_id = customer.address_id
+WHERE district LIKE 'Texas'
+
+-- Question 2 Answer: 1406
+SELECT amount, first_name, last_name
+FROM payment
+INNER JOIN customer
+ON payment.customer_id = customer.customer_id
+WHERE amount > 6.99
+
+--Question 3 Answer: 6 customers
+SELECT *
+FROM customer
+WHERE customer_id IN(
+	SELECT customer_id
+	FROM payment
+	GROUP BY customer_id
+	HAVING SUM(amount) > 175
+	ORDER BY SUM(amount) DESC
+);
+
+-- Question 4 Answer: Kevin Schuler
+SELECT customer.first_name, customer.last_name, customer.email, country
+FROM customer
+FULL JOIN address
+ON customer.address_id = address.address_id
+FULL JOIN city
+ON address.city_id = city.city_id
+FULL JOIN country
+ON city.country_id = country.country_id
+WHERE country = 'Nepal';
+
+-- Question 5 answer: Jon Stephens
+SELECT first_name, last_name, COUNT(payment_id) AS transactions
+FROM staff
+LEFT JOIN payment
+ON staff.staff_id = payment.staff_id
+GROUP BY first_name, last_name
+ORDER BY transactions DESC;
+
+-- Question 6 Answer: R,195. NC-17,210. G,178. PG,194. pg-13,223
+SELECT COUNT(film_id), rating
+FROM film
+GROUP BY rating;
+
+-- Question 7 answer: 130
+Select first_name, last_name
+FROM customer
+WHERE customer_id IN(
+	SELECT customer_id
+	FROM payment
+	WHERE amount > 6.99
+	GROUP BY customer_id
+	HAVING COUNT(amount) = 1
+)GROUP BY first_name, last_name;
+
+-- Question 8 answer: 24 Why is Mike giving out so many free movies?
+SELECT COUNT(rental_id) AS free_movies, first_name, last_name
+FROM payment
+INNER JOIN staff
+ON payment.staff_id = staff.staff_id
+WHERE amount = 0
+GROUP BY first_name, last_name
+ORDER BY free_movies DESC
+
+
+
